@@ -1,5 +1,87 @@
 [
   {
+    "id": "java-openwhisk-stack",
+    "creator": "ide",
+    "name": "OpenWhisk Serverless",
+    "description": "Java stack with OpenWhisk Serverless",
+    "scope": "general",
+    "tags": [
+      "Java",
+      "JDK",
+      "Maven",
+      "Tomcat",
+      "CentOS",
+      "OpenWhisk"
+    ],
+    "components": [
+      {
+        "name": "CentOS",
+        "version": "---"
+      },
+      {
+        "name": "JDK",
+        "version": "1.8.0_45"
+      },
+      {
+        "name": "Maven",
+        "version": "3.2.2"
+      },
+      {
+        "name": "Tomcat",
+        "version": "8.0.24"
+      }
+    ],
+    "workspaceConfig": {
+      "environments": {
+        "default": {
+          "machines": {
+            "dev-machine": {
+              "installers": [
+                "org.eclipse.che.exec",
+                "org.eclipse.che.terminal",
+                "org.eclipse.che.ws-agent"
+              ],
+              "servers": {
+                "8080/tcp": {
+                  "port": "8080",
+                  "protocol": "http"
+                },
+                "8000/tcp": {
+                  "port": "8000",
+                  "protocol": "http"
+                }
+              },
+              "attributes": {
+                "memoryLimitBytes": "2147483648"
+              }
+            }
+          },
+          "recipe": {
+            "content": "florentbenoit/vertx-image",
+            "type": "dockerimage"
+          }
+        }
+      },
+      "name": "default",
+      "defaultEnv": "default",
+      "description": null,
+      "commands": [
+        {
+          "commandLine": "mvn clean install -f ${current.project.path}",
+          "name": "build",
+          "type": "mvn",
+          "attributes": {
+            "previewUrl": "",
+            "goal": "Build"
+          }
+        }
+      ]
+    },
+    "stackIcon": {
+      "name": "type-openwhisk.svg",
+      "mediaType": "image/svg+xml"
+    }
+  }, {
     "id": "java-theia-docker",
     "creator": "ide",
     "name": "Java Theia (docker)",

@@ -21,6 +21,8 @@ import {NavbarDropdownMenuController} from './navbar-dropdown-menu/navbar-dropdo
 import {NavbarDropdownMenu} from './navbar-dropdown-menu/navbar-dropdown-menu.directive';
 import {NavbarNotificationController} from './notification/navbar-notification.controller';
 import {NavbarNotification} from './notification/navbar-notification.directive';
+import { BoosterDropController } from './booster-drop/booster-drop.controller';
+import { BoosterDrop } from './booster-drop/booster-drop.directive';
 
 export class NavbarConfig {
 
@@ -38,5 +40,9 @@ export class NavbarConfig {
 
     register.controller('NavbarNotificationController', NavbarNotificationController);
     register.directive('navbarNotification', NavbarNotification);
+
+    register.controller('BoosterDropController', BoosterDropController);
+    register.directive('boosterDrop', BoosterDrop);
+
   }
 }

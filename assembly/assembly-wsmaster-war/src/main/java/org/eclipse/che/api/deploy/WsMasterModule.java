@@ -74,6 +74,7 @@ import org.eclipse.che.multiuser.organization.api.OrganizationApiModule;
 import org.eclipse.che.multiuser.organization.api.OrganizationJpaModule;
 import org.eclipse.che.multiuser.permission.user.UserServicePermissionsFilter;
 import org.eclipse.che.multiuser.resource.api.ResourceModule;
+import org.eclipse.che.plugin.github.factory.resolver.BoosterFactoryParametersResolver;
 import org.eclipse.che.plugin.github.factory.resolver.GithubFactoryParametersResolver;
 import org.eclipse.che.security.PBKDF2PasswordEncryptor;
 import org.eclipse.che.security.PasswordEncryptor;
@@ -117,6 +118,7 @@ public class WsMasterModule extends AbstractModule {
     Multibinder<FactoryParametersResolver> factoryParametersResolverMultibinder =
         Multibinder.newSetBinder(binder(), FactoryParametersResolver.class);
     factoryParametersResolverMultibinder.addBinding().to(GithubFactoryParametersResolver.class);
+    factoryParametersResolverMultibinder.addBinding().to(BoosterFactoryParametersResolver.class);
 
     bind(org.eclipse.che.api.core.rest.ApiInfoService.class);
     bind(org.eclipse.che.api.project.server.template.ProjectTemplateDescriptionLoader.class)

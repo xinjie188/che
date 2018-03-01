@@ -19,5 +19,6 @@ public class GitHubFactoryModule extends AbstractModule {
   @Override
   protected void configure() {
     bind(GithubURLParser.class).to(LegacyGithubURLParser.class);
+    bind(BoosterService.class);
   }
 }

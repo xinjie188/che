@@ -65,8 +65,9 @@ public class MavenExtension {
                 "org.apache.maven.archetypes", "maven-archetype-quickstart", "RELEASE", null),
             new MavenArchetype(
                 "org.apache.maven.archetypes", "maven-archetype-webapp", "RELEASE", null),
+            new MavenArchetype("org.apache.openejb.maven", "tomee-webapp-archetype", "1.7.1", null),
             new MavenArchetype(
-                "org.apache.openejb.maven", "tomee-webapp-archetype", "1.7.1", null));
+                "org.apache.openwhisk.java", "java-action-archetype", "1.0-SNAPSHOT", null));
   }
 
   public static List<MavenArchetype> getAvailableArchetypes() {

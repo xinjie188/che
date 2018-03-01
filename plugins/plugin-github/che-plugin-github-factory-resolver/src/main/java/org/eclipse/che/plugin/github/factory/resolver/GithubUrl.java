@@ -172,6 +172,16 @@ public class GithubUrl {
         .toString();
   }
 
+  protected String boosterFileLocation() {
+    return new StringJoiner("/")
+        .add("https://raw.githubusercontent.com")
+        .add(username)
+        .add(repository)
+        .add(branch)
+        .add(".openshiftio/booster.yaml")
+        .toString();
+  }
+
   /**
    * Provides location to the repository part of the full github URL.
    *
