@@ -117,6 +117,7 @@
           <class name="org.eclipse.che.selenium.git.CommitFilesByMultiSelectTest"/>
           <class name="org.eclipse.che.selenium.git.CommitFilesTest"/>
           <class name="org.eclipse.che.selenium.git.CreateAndDeleteLocalBranchTest"/>
+          <class name="org.eclipse.che.selenium.git.FetchAndMergeRemoteBranchIntoLocalTest"/>
           <class name="org.eclipse.che.selenium.git.GitChangeMarkersTest"/>
           <class name="org.eclipse.che.selenium.git.GitColorsTest"/>
           <class name="org.eclipse.che.selenium.git.InitializeAndDeleteLocalRepositoryTest"/>
@@ -124,6 +125,7 @@
           <class name="org.eclipse.che.selenium.git.GitPullConflictTest"/>
           <class name="org.eclipse.che.selenium.git.GitPullTest"/>
           <class name="org.eclipse.che.selenium.git.GitCompareTest"/>
+          <class name="org.eclipse.che.selenium.git.RevertCommitTest"/>
           <class name="org.eclipse.che.selenium.gwt.CheckSimpleGwtAppTest"/>
           <class name="org.eclipse.che.selenium.intelligencecommand.MacrosCommandsEditorTest"/>
           <class name="org.eclipse.che.selenium.intelligencecommand.AutocompleteCommandsEditorTest"/>
