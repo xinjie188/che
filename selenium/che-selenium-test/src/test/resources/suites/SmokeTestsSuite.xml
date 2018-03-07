@@ -18,11 +18,9 @@
     <test name="all">
         <classes>
             <class name="org.eclipse.che.selenium.git.GitPullTest"/>
-            <class name="org.eclipse.che.selenium.git.GitCompareTest"/>
             <class name="org.eclipse.che.selenium.git.GitPullConflictTest"/>
-            <class name="org.eclipse.che.selenium.git.FetchAndMergeRemoteBranchToLocalTest"/>
-            <class name="org.eclipse.che.selenium.git.SetGitCommitterTest"/>
-            <class name="org.eclipse.che.selenium.git.PushingChangesTest"/>
+            <class name="org.eclipse.che.selenium.git.FetchAndMergeRemoteBranchIntoLocalTest"/>
+            <class name="org.eclipse.che.selenium.git.RevertCommitTest"/>
             <class name="org.eclipse.che.selenium.git.PushChangeNotUpdatedRepoTest"/>
         </classes>
     </test>
