@@ -43,7 +43,6 @@ import org.testng.annotations.Test;
 public class FetchAndMergeRemoteBranchToLocalTest {
   private static final String REPO_NAME = NameGenerator.generate("FetchAndMergeTest-", 3);
   private static final String PROJECT_NAME = NameGenerator.generate("FetchAndMergeTest-", 4);
-  private static final String PATH_TO_JAVA_FILE = "src/main/java/org/eclipse/qa/examples";
   private static final String CHANGE_CONTENT =
       String.format("//change_content-%s", String.valueOf(System.currentTimeMillis()));
 
@@ -96,6 +95,8 @@ public class FetchAndMergeRemoteBranchToLocalTest {
     String textFile = "README.md";
     String javaFile = "AppController";
     String jspFile = "index.jsp";
+    String pathToJavaFile = "src/main/java/org/eclipse/qa/examples";
+    String pathToJspFile = "src/main/webapp";
     String originMaster = "origin/master";
     String mergeMess1 = "Fast-forward Merged commits:";
     String mergeMess2 = "New HEAD commit: ";
@@ -105,18 +106,18 @@ public class FetchAndMergeRemoteBranchToLocalTest {
     String repoUrl = String.format("https://github.com/%s/%s.git", gitHubUsername, REPO_NAME);
     git.importJavaApp(repoUrl, PROJECT_NAME, MAVEN);
 
-    // change files in the test repo on GitHub
+    // change content in the test repo on GitHub
+    deleteFileOnGithubSide(String.format("%s/%s", pathToJspFile, jspFile), "delete index.jsp");
     changeContentOnGithubSide(
-        String.format("%s/%s.java", PATH_TO_JAVA_FILE, javaFile), CHANGE_CONTENT);
+        String.format("%s/%s.java", pathToJavaFile, javaFile), CHANGE_CONTENT);
     changeContentOnGithubSide(textFile, CHANGE_CONTENT);
-    // TODO try to by koshuke lib remove index.jsp
 
     performFetch();
 
-    // open files and wait that files are not changed
+    // open project and check that content is not changed
     projectExplorer.quickExpandWithJavaScript();
     projectExplorer.openItemByPath(
-        String.format("%s/%s/%s.java", PROJECT_NAME, PATH_TO_JAVA_FILE, javaFile));
+        String.format("%s/%s/%s.java", PROJECT_NAME, pathToJavaFile, javaFile));
     editor.waitActive();
     editor.waitTextNotPresentIntoEditor(CHANGE_CONTENT);
     projectExplorer.openItemByPath(String.format("%s/%s", PROJECT_NAME, textFile));
@@ -131,13 +132,15 @@ public class FetchAndMergeRemoteBranchToLocalTest {
     eventsPanel.clickEventLogBtn();
     eventsPanel.waitExpectedMessage(mergeMess1);
 
-    // wait changes in the files
+    // check the content is changed
     editor.selectTabByName(javaFile);
     editor.waitActive();
     editor.waitTextIntoEditor(CHANGE_CONTENT);
     editor.selectTabByName(textFile);
     editor.waitActive();
     editor.waitTextIntoEditor(CHANGE_CONTENT);
+    projectExplorer.waitItemInvisibility(
+        String.format("%s/%s/%s", PROJECT_NAME, "src/main/webapp", jspFile));
 
     // merge again
     mergeRemoteBranch(originMaster);
@@ -149,6 +152,10 @@ public class FetchAndMergeRemoteBranchToLocalTest {
     git.waitTextInHistoryForm(CHANGE_CONTENT);
     git.clickOnHistoryRowInСommitsList(0);
     git.waitContentInHistoryEditor(CHANGE_CONTENT);
+  }
+
+  private void deleteFileOnGithubSide(String pathToContent, String commitMess) throws IOException {
+    gitHubRepository.getFileContent(pathToContent).delete(commitMess);
   }
 
   private void changeContentOnGithubSide(String pathToContent, String content) throws IOException {
