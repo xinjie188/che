@@ -113,7 +113,7 @@ public class BoosterFactoryParametersResolverTest {
   @Test
   public void shouldReturnGitHubSimpleFactory() throws Exception {
 
-    String githubUrl = "https://github.com/jboss-fuse/fuse-springboot-circuit-breaker-booster";
+    String githubUrl = "https://github.com/openshiftio-vertx-boosters/vertx-health-checks-booster";
 
     FactoryDto factoryDto =
         boosterGithubFactoryParametersResolver.createFactory(
@@ -124,7 +124,7 @@ public class BoosterFactoryParametersResolverTest {
 
     List<CommandDto> commandDtoList = workspaceConfigDto.getCommands();
     assertNotNull(commandDtoList);
-    assertEquals(commandDtoList.size(), 3);
+    assertEquals(commandDtoList.size(), 1);
 
     List<ProjectConfigDto> projectConfigDtoList = workspaceConfigDto.getProjects();
     assertNotNull(projectConfigDtoList);
@@ -141,12 +141,12 @@ public class BoosterFactoryParametersResolverTest {
 
     Map<String, EnvironmentDto> environmentDtoMap = workspaceConfigDto.getEnvironments();
     assertNotNull(environmentDtoMap);
-    EnvironmentDto circuitDto = environmentDtoMap.get("fuse-springboot-circuit-breaker-booster");
+    EnvironmentDto circuitDto = environmentDtoMap.get("vertx-health-checks-booster");
     assertNotNull(circuitDto);
     RecipeDto recipeDto = circuitDto.getRecipe();
     assertNotNull(recipeDto);
     assertEquals(recipeDto.getType(), "dockerimage");
-    assertEquals(recipeDto.getContent(), "florentbenoit/fuse-image");
+    assertEquals(recipeDto.getContent(), "florentbenoit/vertx-image");
 
     Map<String, MachineConfigDto> machineConfigDtoMap = circuitDto.getMachines();
     assertNotNull(machineConfigDtoMap);
@@ -155,7 +155,7 @@ public class BoosterFactoryParametersResolverTest {
     assertNotNull(machineConfigDto);
     Map<String, ServerConfigDto> serversMap = machineConfigDto.getServers();
     assertNotNull(serversMap);
-    ServerConfigDto greeterServiceServer = serversMap.get("greeter-service");
+    ServerConfigDto greeterServiceServer = serversMap.get("api-service");
     assertNotNull(greeterServiceServer);
     assertEquals(greeterServiceServer.getPort(), "8080");
   }

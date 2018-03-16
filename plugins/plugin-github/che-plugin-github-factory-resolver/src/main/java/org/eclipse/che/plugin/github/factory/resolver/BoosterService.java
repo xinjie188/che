@@ -11,6 +11,7 @@
 package org.eclipse.che.plugin.github.factory.resolver;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static org.eclipse.che.plugin.github.factory.resolver.BoosterPropertiesMapping.VERTX_BOOSTER;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,8 +34,7 @@ import org.slf4j.LoggerFactory;
 @Path("/booster")
 public class BoosterService {
 
-  public static final List<String> AUTHORIZED_BOOSTERS =
-      Arrays.asList("Vert.x HTTP Booster", "Fuse Spring Boot Circuit Breaker Example");
+  public static final List<String> AUTHORIZED_BOOSTERS = Arrays.asList(VERTX_BOOSTER);
 
   private static final Logger LOG = LoggerFactory.getLogger(BoosterService.class);
 

@@ -54,7 +54,7 @@ public class BoosterServiceTest {
             .when()
             .get(
                 SECURE_PATH
-                    + "/booster/check?url=https://github.com/jboss-fuse/fuse-springboot-circuit-breaker-booster");
+                    + "/booster/check?url=https://github.com/openshiftio-vertx-boosters/vertx-health-checks-booster");
 
     assertEquals(response.getStatusCode(), 200);
     assertEquals(response.getBody().print(), "true");

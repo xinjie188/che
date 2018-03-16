@@ -14,7 +14,6 @@ import static org.eclipse.che.dto.server.DtoFactory.newDto;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +24,7 @@ import org.eclipse.che.api.workspace.shared.dto.ServerConfigDto;
 /** @author Florent Benoit */
 public class BoosterPropertiesMapping {
 
-  private static final String FUSE_BOOSTER = "Fuse Spring Boot Circuit Breaker Example";
+  public static final String VERTX_BOOSTER = "Vert.x Health Check Example";
 
   private final Map<String, List<CommandDto>> hardCodedCommands;
 
@@ -39,43 +38,26 @@ public class BoosterPropertiesMapping {
     this.hardCodedImages = new HashMap();
     this.hardcodedServers = new HashMap<>();
 
-    CommandDto buildProject =
-        newDto(CommandDto.class)
-            .withName("Build project")
-            .withCommandLine("mvn  -f ${current.project.path} clean package")
-            .withType("mvn")
-            .withAttributes(Collections.singletonMap("goal", "Run"));
-    CommandDto runNameService =
-        newDto(CommandDto.class)
-            .withName("Run Name Service")
-            .withCommandLine(
-                "cd ${current.project.path}/name-service && mvn spring-boot:run -Dserver.port=8081")
-            .withType("custom")
-            .withAttributes(Collections.singletonMap("goal", "Run"));
     Map<String, String> attrs = new HashMap<>();
     attrs.put("goal", "Run");
-    attrs.put("previewUrl", "${server.greeter-service}");
-
-    CommandDto runGreetingService =
+    attrs.put("previewUrl", "${server.api-service}");
+    CommandDto runNameService =
         newDto(CommandDto.class)
-            .withName("Run Greeting Service")
-            .withCommandLine("cd ${current.project.path}/greetings-service && mvn spring-boot:run")
+            .withName("Run project")
+            .withCommandLine(
+                "unset JAVA_OPTS && cd ${current.project.path} mvn compile && mvn vertx:run")
             .withType("custom")
             .withAttributes(attrs);
 
-    this.hardCodedCommands.put(
-        FUSE_BOOSTER, Arrays.asList(buildProject, runNameService, runGreetingService));
+    this.hardCodedCommands.put(VERTX_BOOSTER, Arrays.asList(runNameService));
 
-    this.hardCodedImages.put(FUSE_BOOSTER, "florentbenoit/fuse-image");
+    this.hardCodedImages.put(VERTX_BOOSTER, "florentbenoit/vertx-image");
 
     Map<String, ServerConfigDto> fuseServers = new HashMap<>();
     ServerConfigDto serverConfigDtoGreeter =
         newDto(ServerConfigDto.class).withPort("8080").withProtocol("http");
-    fuseServers.put("greeter-service", serverConfigDtoGreeter);
-    ServerConfigDto serverConfigDtoName =
-        newDto(ServerConfigDto.class).withPort("8081").withProtocol("http");
-    fuseServers.put("name-service", serverConfigDtoName);
-    this.hardcodedServers.put(FUSE_BOOSTER, fuseServers);
+    fuseServers.put("api-service", serverConfigDtoGreeter);
+    this.hardcodedServers.put(VERTX_BOOSTER, fuseServers);
   }
 
   public List<CommandDto> getCommands(String boosterName) {
