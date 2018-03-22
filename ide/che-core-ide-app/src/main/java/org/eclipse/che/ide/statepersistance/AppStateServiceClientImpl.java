@@ -1,0 +1,57 @@
+/*
+ * Copyright (c) 2012-2018 Red Hat, Inc.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Red Hat, Inc. - initial API and implementation
+ */
+package org.eclipse.che.ide.statepersistance;
+
+import static org.eclipse.che.ide.MimeType.APPLICATION_JSON;
+import static org.eclipse.che.ide.rest.HTTPHeader.ACCEPT;
+import static org.eclipse.che.ide.rest.HTTPHeader.CONTENT_TYPE;
+
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import org.eclipse.che.api.promises.client.Promise;
+import org.eclipse.che.ide.api.app.AppContext;
+import org.eclipse.che.ide.api.statepersistance.AppStateServiceClient;
+import org.eclipse.che.ide.rest.AsyncRequestFactory;
+import org.eclipse.che.ide.rest.StringUnmarshaller;
+
+/** @author Roman Nikitenko */
+@Singleton
+public class AppStateServiceClientImpl implements AppStateServiceClient {
+  private static final String PREFIX = "/app/state/";
+
+  private AppContext appContext;
+  private AsyncRequestFactory asyncRequestFactory;
+
+  @Inject
+  public AppStateServiceClientImpl(AppContext appContext, AsyncRequestFactory asyncRequestFactory) {
+    this.appContext = appContext;
+    this.asyncRequestFactory = asyncRequestFactory;
+  }
+
+  public Promise<String> getState() {
+    String userId = appContext.getCurrentUser().getId();
+    String url = appContext.getWsAgentServerApiEndpoint() + PREFIX + userId;
+    return asyncRequestFactory
+        .createGetRequest(url)
+        .header(ACCEPT, APPLICATION_JSON)
+        .send(new StringUnmarshaller());
+  }
+
+  public Promise<Void> saveState(String state) {
+    String userId = appContext.getCurrentUser().getId();
+    String url = appContext.getWsAgentServerApiEndpoint() + PREFIX + "update/" + userId;
+
+    return asyncRequestFactory
+        .createPostRequest(url, state)
+        .header(CONTENT_TYPE, APPLICATION_JSON)
+        .send();
+  }
+}

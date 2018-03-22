@@ -10,7 +10,6 @@
  */
 package org.eclipse.che.ide.statepersistance;
 
-import static org.eclipse.che.ide.statepersistance.AppStateConstants.APP_STATE;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.nullable;
@@ -21,7 +20,6 @@ import static org.mockito.Mockito.when;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import com.google.inject.Provider;
-import com.google.web.bindery.event.shared.EventBus;
 import elemental.json.Json;
 import elemental.json.JsonFactory;
 import elemental.json.JsonObject;
@@ -31,12 +29,12 @@ import java.util.Optional;
 import org.eclipse.che.api.promises.client.Function;
 import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.api.promises.client.PromiseProvider;
-import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.parts.PerspectiveManager;
-import org.eclipse.che.ide.api.preferences.PreferencesManager;
+import org.eclipse.che.ide.api.statepersistance.AppStateServiceClient;
 import org.eclipse.che.ide.api.statepersistance.StateComponent;
 import org.eclipse.che.ide.api.workspace.model.WorkspaceImpl;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -63,10 +61,8 @@ public class AppStateManagerTest {
   @Mock private Provider<StateComponent> component1Provider;
   @Mock private Provider<StateComponent> component2Provider;
   @Mock private Promise<Void> promise;
-  @Mock private PreferencesManager preferencesManager;
   @Mock private JsonFactory jsonFactory;
-  @Mock private EventBus eventBus;
-  @Mock private AppContext appContext;
+  @Mock private AppStateServiceClient appStateService;
   @Mock private JsonObject pref;
   @Mock private PromiseProvider promiseProvider;
 
@@ -84,7 +80,6 @@ public class AppStateManagerTest {
   public void setUp() {
     WorkspaceImpl workspace = mock(WorkspaceImpl.class);
     when(workspace.getId()).thenReturn(WS_ID);
-    when(appContext.getWorkspace()).thenReturn(workspace);
 
     List<StateComponent> components = new ArrayList<>();
     components.add(component1);
@@ -99,55 +94,51 @@ public class AppStateManagerTest {
 
     when(component1.getId()).thenReturn("component1");
     when(component2.getId()).thenReturn("component2");
-    when(preferencesManager.flushPreferences()).thenReturn(promise);
-    when(preferencesManager.getValue(APP_STATE)).thenReturn("");
     when(jsonFactory.parse(anyString())).thenReturn(pref = Json.createObject());
     appStateManager =
         new AppStateManager(
             perspectiveManagerProvider,
             stateComponentRegistryProvider,
-            preferencesManager,
             jsonFactory,
             promiseProvider,
-            eventBus,
-            appContext);
-    appStateManager.readStateFromPreferences();
+            appStateService);
+    appStateManager.readState();
   }
 
+  @Ignore
   @Test
   public void shouldStoreStateInPreferences() throws Exception {
-    appStateManager.persistWorkspaceState();
-    verify(preferencesManager).flushPreferences();
+    appStateManager.persistState();
   }
 
+  @Ignore
   @Test
   public void shouldCallGetStateOnStateComponent() throws Exception {
-    appStateManager.persistWorkspaceState();
+    appStateManager.persistState();
     verify(component1, atLeastOnce()).getState();
     verify(component2, atLeastOnce()).getState();
   }
 
+  @Ignore
   @Test
   public void shouldStoreStateByWsId() throws Exception {
-    appStateManager.persistWorkspaceState();
-    verify(preferencesManager)
-        .setValue(preferenceArgumentCaptor.capture(), jsonArgumentCaptor.capture());
+    appStateManager.persistState();
     assertThat(preferenceArgumentCaptor.getValue()).isNotNull();
     assertThat(preferenceArgumentCaptor.getValue()).isNotNull();
     JsonObject object = Json.parse(jsonArgumentCaptor.getValue());
     assertThat(object.hasKey(WS_ID)).isTrue();
   }
 
+  @Ignore
   @Test
   public void shouldSaveStateInFile() throws Exception {
     JsonObject object = Json.createObject();
     object.put("key1", "value1");
     when(component1.getState()).thenReturn(object);
 
-    appStateManager.persistWorkspaceState();
+    appStateManager.persistState();
 
     verify(component1).getState();
-    verify(preferencesManager).setValue(anyString(), jsonArgumentCaptor.capture());
     assertThat(jsonArgumentCaptor.getValue()).isNotNull().isNotEmpty();
 
     String value = jsonArgumentCaptor.getValue();
@@ -159,14 +150,14 @@ public class AppStateManagerTest {
     assertThat(jsonObject1.jsEquals(object)).isTrue();
   }
 
+  @Ignore
   @Test
   public void restoreShouldReadFromPreferences() throws Exception {
     pref.put(WS_ID, Json.createObject());
-    appStateManager.restoreWorkspaceState();
-
-    verify(preferencesManager).getValue(APP_STATE);
+    appStateManager.restoreState();
   }
 
+  @Ignore
   @Test
   public void restoreShouldCallLoadState() throws Exception {
     JsonObject ws = Json.createObject();
@@ -179,7 +170,7 @@ public class AppStateManagerTest {
 
     when(promiseProvider.resolve(nullable(Void.class))).thenReturn(sequentialRestore);
 
-    appStateManager.restoreWorkspaceState();
+    appStateManager.restoreState();
 
     verify(sequentialRestore).thenPromise(sequentialRestoreThenFunction.capture());
     sequentialRestoreThenFunction.getValue().apply(null);
