@@ -292,6 +292,10 @@ CHE_CONFIG_FILE_PATH=${CHE_CONFIG_FILE_PATH:-${DEFAULT_CHE_CONFIG_FILE_PATH}}
 cat "${CHE_DEPLOYMENT_FILE_PATH}" | \
     sed "s/          image:.*/          image: \"${CHE_IMAGE_SANITIZED}\"/" | \
     sed "s/          imagePullPolicy:.*/          imagePullPolicy: \"${IMAGE_PULL_POLICY}\"/" | \
+    if [[ "${CHE_MULTIUSER}" != "true" ]]; then
+    sed "s|#CHE_MASTER_PVC|- apiVersion: v1\n  kind: PersistentVolumeClaim\n  metadata:\n    labels:\n      app: che\n    name: che-data-volume\n  spec:\n    accessModes:\n    - ReadWriteOnce\n    resources:\n      requests:\n        storage: 1Gi|" | \
+    sed "s|    #CHE_MASTER_VOLUME_MOUNTS.*|    - mountPath: /data \n            name: che-data-volume|" | \
+    sed "s|    #CHE_MASTER_VOLUMES.*|    - name: che-data-volume\n          persistentVolumeClaim:\n            claimName: che-data-volume|";else cat -; fi | \
     inject_che_config "#CHE_MASTER_CONFIG" "${CHE_CONFIG_FILE_PATH}"
 }
 
