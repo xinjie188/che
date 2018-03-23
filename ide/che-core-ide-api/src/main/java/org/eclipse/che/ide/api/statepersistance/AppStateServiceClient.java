@@ -10,12 +10,26 @@
  */
 package org.eclipse.che.ide.api.statepersistance;
 
+import elemental.json.JsonFactory;
 import org.eclipse.che.api.promises.client.Promise;
 
-/** @author Roman Nikitenko */
+/**
+ * Service allows to get or persist IDE state for current user.
+ *
+ * @author Roman Nikitenko
+ */
 public interface AppStateServiceClient {
 
+  /**
+   * Get saved IDE state for current workspace in JSON format. Use {@link JsonFactory#parse(String)}
+   * to get corresponding object.
+   */
   Promise<String> getState();
 
+  /**
+   * Save IDE state for current workspace.
+   *
+   * @param state IDE state in JSON format.
+   */
   Promise<Void> saveState(String state);
 }

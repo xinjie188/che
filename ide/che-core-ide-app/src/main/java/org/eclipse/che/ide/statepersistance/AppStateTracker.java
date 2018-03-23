@@ -27,7 +27,11 @@ import org.eclipse.che.ide.api.parts.PartStackStateChangedEvent;
 import org.eclipse.che.ide.api.workspace.WorkspaceReadyEvent;
 import org.eclipse.che.ide.api.workspace.event.WorkspaceStoppingEvent;
 
-/** @author Roman Nikitenko */
+/**
+ * Contains handlers to track app state and persist/restore IDE state across sessions.
+ *
+ * @author Roman Nikitenko
+ */
 @Singleton
 public class AppStateTracker
     implements WindowActionHandler,
@@ -95,7 +99,7 @@ public class AppStateTracker
 
     JsonObject appState = appStateManager.collectAppStateData();
     if (appState.keys().length > 0) {
-      appStateSyncWriter.saveStateSynchronously(appState);
+      appStateSyncWriter.saveState(appState);
     }
   }
 

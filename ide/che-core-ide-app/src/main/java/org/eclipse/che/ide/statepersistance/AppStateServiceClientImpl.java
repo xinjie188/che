@@ -36,6 +36,7 @@ public class AppStateServiceClientImpl implements AppStateServiceClient {
     this.asyncRequestFactory = asyncRequestFactory;
   }
 
+  @Override
   public Promise<String> getState() {
     String userId = appContext.getCurrentUser().getId();
     String url = appContext.getWsAgentServerApiEndpoint() + PREFIX + userId;
@@ -45,6 +46,7 @@ public class AppStateServiceClientImpl implements AppStateServiceClient {
         .send(new StringUnmarshaller());
   }
 
+  @Override
   public Promise<Void> saveState(String state) {
     String userId = appContext.getCurrentUser().getId();
     String url = appContext.getWsAgentServerApiEndpoint() + PREFIX + "update/" + userId;

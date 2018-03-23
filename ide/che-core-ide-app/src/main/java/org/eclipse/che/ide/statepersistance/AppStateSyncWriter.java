@@ -14,8 +14,14 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import elemental.json.JsonObject;
 import org.eclipse.che.ide.api.app.AppContext;
+import org.eclipse.che.ide.api.statepersistance.AppStateServiceClient;
 
-/** @author Roman Nikitenko */
+/**
+ * Provides ability to save IDE state synchronously. It is strongly encouraged to use {@link
+ * AppStateServiceClient} instead.
+ *
+ * @author Roman Nikitenko
+ */
 @Singleton
 public class AppStateSyncWriter {
   private static final String UPDATE_STATE = "/app/state/update/";
@@ -27,7 +33,13 @@ public class AppStateSyncWriter {
     this.appContext = appContext;
   }
 
-  void saveStateSynchronously(JsonObject appState) {
+  /**
+   * Save IDE state synchronously. Note: Consider using {@link
+   * AppStateServiceClient#saveState(String)} instead.
+   *
+   * @param appState IDE state to save
+   */
+  void saveState(JsonObject appState) {
     String userId = appContext.getCurrentUser().getId();
     String url = appContext.getWsAgentServerApiEndpoint() + UPDATE_STATE + userId;
 
@@ -37,7 +49,6 @@ public class AppStateSyncWriter {
   private native void sendSyncRequest(String url, String json) /*-{
               try {
                     var request = new XMLHttpRequest();
-
                     request.open("POST", url, false);
                     request.setRequestHeader("Content-Type", "application/json");
                     request.send(json);

@@ -44,6 +44,11 @@ public class AppStateBackCompatibility {
     this.preferencesManager = preferencesManager;
   }
 
+  /**
+   * Allows to get IDE state for current workspace from user preferences.
+   *
+   * @return IDE state of current workspace or {@code null} when this one is not found
+   */
   @Nullable
   JsonObject getAppState() {
     JsonObject allWsState = getAllWorkspacesState();
@@ -57,18 +62,23 @@ public class AppStateBackCompatibility {
     return workspaceSettings != null ? workspaceSettings.get(WORKSPACE) : null;
   }
 
+  /**
+   * Allows to get states for all workspaces from user preferences.
+   *
+   * @return app states of all workspaces for current user or {@code null} when these ones are not
+   *     found
+   */
   @Nullable
   JsonObject getAllWorkspacesState() {
     try {
-
       String json = preferencesManager.getValue(APP_STATE);
       return jsonFactory.parse(json);
-
     } catch (Exception e) {
       return null;
     }
   }
 
+  /** Allows to remove IDE state for current workspace from user preferences */
   void removeAppState() {
     JsonObject allWsState = getAllWorkspacesState();
     if (allWsState != null) {
@@ -78,6 +88,10 @@ public class AppStateBackCompatibility {
     }
   }
 
+  /**
+   * Provide ability to write to preferences state for all workspaces. It's used to clean up user
+   * preferences
+   */
   private Promise<Void> writeToPreferences(JsonObject state) {
     final String json = state.toJson();
     preferencesManager.setValue(APP_STATE, json);

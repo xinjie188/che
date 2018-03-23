@@ -34,11 +34,12 @@ import org.eclipse.che.ide.api.statepersistance.StateComponent;
 import org.eclipse.che.ide.util.loging.Log;
 
 /**
- * Responsible for persisting and restoring IDE state across sessions.
+ * Responsible for collecting, persisting and restoring IDE state.
  *
  * @author Artem Zatsarynnyi
  * @author Yevhen Vydolob
  * @author Vlad Zhukovskyi
+ * @author Roman Nikitenko
  */
 @Singleton
 public class AppStateManager {
@@ -65,6 +66,10 @@ public class AppStateManager {
     this.appStateService = appStateService;
   }
 
+  /**
+   * Allows to get saved IDE state for current workspace from server side. Creates 'clear' state
+   * when state for current workspace is not found.
+   */
   public Promise<Void> readState() {
     return appStateService
         .getState()
@@ -85,6 +90,7 @@ public class AppStateManager {
             });
   }
 
+  /** Collects current IDE state {@link #collectAppStateData()} and saves on server side. */
   public Promise<Void> persistState() {
     JsonObject newAppState = collectAppStateData();
     if (appState == null || !appState.toJson().equals(newAppState.toJson())) {
@@ -125,11 +131,16 @@ public class AppStateManager {
     return partStacks.getObject(partStackType.name());
   }
 
+  /** Restores given IDE state for {@link StateComponent}s. */
   Promise<Void> restoreState(JsonObject updatedState) {
     appState = updatedState;
     return restoreState();
   }
 
+  /**
+   * Restores cached state for {@link StateComponent}s. Use {@link #readState()} first to restore
+   * not cached state or {@link #restoreState(JsonObject)}
+   */
   Promise<Void> restoreState() {
     try {
       Promise<Void> sequentialRestore = promises.resolve(null);
@@ -151,6 +162,10 @@ public class AppStateManager {
     return promises.resolve(null);
   }
 
+  /**
+   * Allows to collect current state of {@link StateComponent}s. Creates 'clear' state when {@link
+   * StateComponentRegistry} is empty or some errors are occurred at collecting current state.
+   */
   @NotNull
   JsonObject collectAppStateData() {
     JsonObject newAppState = Json.createObject();
