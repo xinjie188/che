@@ -42,15 +42,17 @@ public class AppStateSyncWriter {
   void saveState(JsonObject appState) {
     String userId = appContext.getCurrentUser().getId();
     String url = appContext.getWsAgentServerApiEndpoint() + UPDATE_STATE + userId;
+    String machineToken = appContext.getWorkspace().getRuntime().getMachineToken();
 
-    sendSyncRequest(url, appState.toJson());
+    sendSyncRequest(url, machineToken, appState.toJson());
   }
 
-  private native void sendSyncRequest(String url, String json) /*-{
+  private native void sendSyncRequest(String url, String machineToken, String json) /*-{
               try {
                     var request = new XMLHttpRequest();
                     request.open("POST", url, false);
                     request.setRequestHeader("Content-Type", "application/json");
+                    request.setRequestHeader("Authorization", machineToken);
                     request.send(json);
                 } catch (e) {
                     console.error(e);
