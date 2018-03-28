@@ -24,7 +24,7 @@ import org.eclipse.che.ide.api.statepersistance.AppStateServiceClient;
  */
 @Singleton
 public class AppStateSyncWriter {
-  private static final String UPDATE_STATE = "/app/state/update/";
+  private static final String UPDATE_STATE = "/app/state/update";
 
   private final AppContext appContext;
 
@@ -41,7 +41,7 @@ public class AppStateSyncWriter {
    */
   void saveState(JsonObject appState) {
     String userId = appContext.getCurrentUser().getId();
-    String url = appContext.getWsAgentServerApiEndpoint() + UPDATE_STATE + userId;
+    String url = appContext.getWsAgentServerApiEndpoint() + UPDATE_STATE + "?userId=" + userId;
     String machineToken = appContext.getWorkspace().getRuntime().getMachineToken();
 
     sendSyncRequest(url, machineToken, appState.toJson());

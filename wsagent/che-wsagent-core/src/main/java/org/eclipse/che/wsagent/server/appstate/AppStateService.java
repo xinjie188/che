@@ -8,7 +8,7 @@
  * Contributors:
  *   Red Hat, Inc. - initial API and implementation
  */
-package org.eclipse.che.wsagent.server;
+package org.eclipse.che.wsagent.server.appstate;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.String.format;
@@ -18,12 +18,16 @@ import static org.eclipse.che.api.fs.server.WsPathUtils.resolve;
 import static org.eclipse.che.api.project.shared.Constants.CHE_DIR;
 
 import com.google.inject.Inject;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import org.eclipse.che.api.core.BadRequestException;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
@@ -32,7 +36,11 @@ import org.eclipse.che.api.fs.server.FsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** */
+/**
+ * Service allows to get or persist serialized IDE state by user identifier.
+ *
+ * @author Roman Nikitenko
+ */
 @Path("app/state")
 public class AppStateService {
   private static final String USER_DIR_PREFIX = "user_";
@@ -48,10 +56,19 @@ public class AppStateService {
   }
 
   @GET
-  @Path("/{userId}")
   @Consumes(APPLICATION_JSON)
   @Produces(APPLICATION_JSON)
-  public String getAppState(@PathParam("userId") String userId)
+  @ApiOperation(
+    value = "Get saved serialized IDE state of current workspace by user identifier",
+    notes = "Empty string will be returned when IDE state is not found"
+  )
+  @ApiResponses({
+    @ApiResponse(code = 200, message = "OK"),
+    @ApiResponse(code = 400, message = "User ID should be defined"),
+    @ApiResponse(code = 500, message = "Server error")
+  })
+  public String getAppState(
+      @ApiParam(value = "User identifier") @QueryParam("userId") String userId)
       throws ServerException, BadRequestException {
 
     String appStateHolderPath = getAppStateHolderPath(userId);
@@ -59,7 +76,7 @@ public class AppStateService {
       if (fsManager.existsAsFile(appStateHolderPath)) {
         return fsManager.readAsString(appStateHolderPath);
       }
-    } catch (ServerException | NotFoundException | ConflictException e) {
+    } catch (NotFoundException | ConflictException e) {
       LOG.error("Can not get app state for user %s, the reason is: %s", userId, e.getCause());
       throw new ServerException("Can not save app state for user " + userId);
     }
@@ -67,9 +84,15 @@ public class AppStateService {
   }
 
   @POST
-  @Path("update/{userId}")
+  @Path("update")
   @Consumes(APPLICATION_JSON)
-  public void saveState(@PathParam("userId") String userId, String json)
+  @ApiOperation(value = "Save serialized IDE state of current workspace for given user")
+  @ApiResponses({
+    @ApiResponse(code = 200, message = "OK"),
+    @ApiResponse(code = 400, message = "User ID should be defined"),
+    @ApiResponse(code = 500, message = "Server error")
+  })
+  public void saveState(@QueryParam("userId") String userId, String json)
       throws ServerException, BadRequestException {
 
     String appStateHolderPath = getAppStateHolderPath(userId);

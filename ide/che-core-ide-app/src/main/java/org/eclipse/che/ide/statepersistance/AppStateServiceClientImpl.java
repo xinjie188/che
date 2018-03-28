@@ -25,7 +25,7 @@ import org.eclipse.che.ide.rest.StringUnmarshaller;
 /** @author Roman Nikitenko */
 @Singleton
 public class AppStateServiceClientImpl implements AppStateServiceClient {
-  private static final String PREFIX = "/app/state/";
+  private static final String PREFIX = "/app/state";
 
   private AppContext appContext;
   private AsyncRequestFactory asyncRequestFactory;
@@ -39,7 +39,7 @@ public class AppStateServiceClientImpl implements AppStateServiceClient {
   @Override
   public Promise<String> getState() {
     String userId = appContext.getCurrentUser().getId();
-    String url = appContext.getWsAgentServerApiEndpoint() + PREFIX + userId;
+    String url = appContext.getWsAgentServerApiEndpoint() + PREFIX + "?userId=" + userId;
     return asyncRequestFactory
         .createGetRequest(url)
         .header(ACCEPT, APPLICATION_JSON)
@@ -49,7 +49,8 @@ public class AppStateServiceClientImpl implements AppStateServiceClient {
   @Override
   public Promise<Void> saveState(String state) {
     String userId = appContext.getCurrentUser().getId();
-    String url = appContext.getWsAgentServerApiEndpoint() + PREFIX + "update/" + userId;
+    String url =
+        appContext.getWsAgentServerApiEndpoint() + PREFIX + "/update/" + "?userId=" + userId;
 
     return asyncRequestFactory
         .createPostRequest(url, state)
