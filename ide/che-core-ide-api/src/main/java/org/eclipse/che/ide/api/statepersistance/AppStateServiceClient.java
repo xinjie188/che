@@ -22,7 +22,8 @@ public interface AppStateServiceClient {
 
   /**
    * Get saved IDE state for current workspace in JSON format. Use {@link JsonFactory#parse(String)}
-   * to get corresponding object.
+   * to get corresponding object. Note: it is expected that saved IDE state object is valid, so any
+   * validations are not performed.
    */
   Promise<String> getState();
 
