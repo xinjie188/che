@@ -379,7 +379,7 @@ prepareTestSuite() {
     TESTS_SCOPE="-DrunSuite=${TMP_SUITE_PATH}"
 
     # set number of threads directly in the suite
-    sed -i -e "s#thread-count=\"[^\"]*\"#thread-count=\"${THREADS}\"#" "$TMP_SUITE_PATH"
+#    sed -i -e "s#thread-count=\"[^\"]*\"#thread-count=\"${THREADS}\"#" "$TMP_SUITE_PATH"
 }
 
 printHelp() {
@@ -718,6 +718,7 @@ runTests() {
                 -Dche.threads=${THREADS} \
                 -Dche.workspace_pool_size=${WORKSPACE_POOL_SIZE} \
                 -DexcludedGroups="$(getExcludedGroups)" \
+                -DsuiteThreadPoolSize=2 \
                 ${DEBUG_OPTIONS} \
                 ${GRID_OPTIONS} \
                 ${MAVEN_OPTIONS}

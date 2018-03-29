@@ -239,6 +239,10 @@
                                     <name>listener</name>
                                     <value>org.eclipse.che.selenium.core.CheSeleniumTestHandler</value>
                                 </property>
+                                <property>
+                                    <name>suitethreadpoolsize</name>
+                                    <value>${suiteThreadPoolSize}</value>
+                                </property>
                             </properties>
                             <systemProperties>
                                 <property>
