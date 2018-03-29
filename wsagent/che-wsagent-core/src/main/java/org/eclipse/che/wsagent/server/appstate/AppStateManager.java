@@ -91,7 +91,6 @@ public class AppStateManager {
       }
     } catch (NotFoundException | ConflictException e) {
       LOG.error("Can not save app state for user %s, the reason is: %s", userId, e.getCause());
-
       throw new ServerException("Can not save app state for user " + userId);
     }
   }

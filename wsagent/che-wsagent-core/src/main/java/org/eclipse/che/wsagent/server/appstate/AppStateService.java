@@ -47,7 +47,8 @@ public class AppStateService {
   @Produces(APPLICATION_JSON)
   @ApiOperation(
     value = "Get saved serialized IDE state of current workspace by user identifier",
-    notes = "Empty string will be returned when IDE state is not found"
+    notes =
+        "It is expected that saved IDE state object is valid, so any validations are not performed. Empty string will be returned when IDE state is not found."
   )
   @ApiResponses({
     @ApiResponse(code = 200, message = "OK"),
@@ -57,7 +58,6 @@ public class AppStateService {
   public String getAppState(
       @ApiParam(value = "User identifier") @Required @QueryParam("userId") String userId)
       throws ServerException, BadRequestException {
-
     try {
       return appStateManager.getAppState(userId);
     } catch (ValidationException e) {
@@ -68,7 +68,11 @@ public class AppStateService {
   @POST
   @Path("update")
   @Consumes(APPLICATION_JSON)
-  @ApiOperation(value = "Save serialized IDE state of current workspace for given user")
+  @ApiOperation(
+    value = "Save serialized IDE state of current workspace for given user",
+    notes =
+        "It is expected that incoming IDE state object is valid, so any validations are not performed."
+  )
   @ApiResponses({
     @ApiResponse(code = 200, message = "OK"),
     @ApiResponse(code = 400, message = "User ID should be defined"),
@@ -78,7 +82,6 @@ public class AppStateService {
       @ApiParam(value = "User identifier") @Required @QueryParam("userId") String userId,
       @ApiParam(value = "Serialized IDE state") String json)
       throws ServerException, BadRequestException {
-
     try {
       appStateManager.saveState(userId, json);
     } catch (ValidationException e) {
